@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1f4d3a">
+<title>Chitonga translation</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Chitonga">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+  :root {
+    --green: #1f4d3a; --green-2: #2d6a50; --copper: #b4693a; --copper-bg: #f6e6da;
+    --bg: #f6f3ee; --card: #fff; --ink: #1d1d1b; --mute: #6b6a64; --line: #ddd8cd; --ok: #2d6a50;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+  header { flex-wrap: wrap; background: var(--green); color: #fff; padding: 10px 16px; padding-top: max(10px, env(safe-area-inset-top)); display: flex; align-items: center; position: -webkit-sticky; position: sticky; top: 0; z-index: 5; }
+  header > * { margin-right: 10px; } header > :last-child { margin-right: 0; }
+  header h1 { font-size: 17px; margin: 0; font-weight: 650; flex: 1; }
+  header .me { font-size: 13px; opacity: .85; }
+  #sync { font-size: 12.5px; padding: 3px 9px; border-radius: 99px; background: rgba(255,255,255,.16); white-space: nowrap; }
+  #sync.pending { background: var(--copper); }
+  main { max-width: 720px; margin: 0 auto; padding: 14px 16px 120px; }
+  .bar { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; margin: 6px 0 4px; }
+  .bar i { display: block; height: 100%; background: var(--green-2); }
+  .stats { font-size: 14px; color: var(--mute); display: flex; justify-content: space-between; flex-wrap: wrap; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin: 14px 0; }
+  .ctx { color: var(--mute); font-size: 15px; padding: 2px 4px; }
+  .ctx b { font-weight: 600; }
+  .doc { font-size: 12.5px; color: var(--mute); letter-spacing: .02em; text-transform: uppercase; }
+  .en { font-size: 21px; line-height: 1.35; margin: 4px 0 12px; font-weight: 500; }
+  label { display: block; font-size: 14px; color: var(--mute); margin: 12px 0 4px; }
+  textarea, input[type=text] { width: 100%; font: inherit; padding: 11px 12px; border: 1.5px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); }
+  textarea { min-height: 96px; resize: vertical; font-size: 19px; }
+  textarea:focus, input:focus { outline: none; border-color: var(--green-2); }
+  .row { display: flex; flex-wrap: wrap; margin-top: 14px; }
+  .row > * { margin: 0 10px 10px 0; } .row > :last-child { margin-right: 0; }
+  button { font: inherit; font-weight: 600; padding: 12px 16px; border-radius: 11px; border: 1.5px solid var(--green); background: #fff; color: var(--green); min-height: 48px; }
+  button.primary { background: var(--green); color: #fff; flex: 1; }
+  button.copper { border-color: var(--copper); color: #8a4a22; }
+  button.ghost { border-color: var(--line); color: var(--mute); }
+  button:disabled { opacity: .45; }
+  .chip { display: inline-block; font-size: 13px; padding: 2px 10px; border-radius: 99px; background: #e9efe9; color: var(--green); font-weight: 600; }
+  .chip.copper { background: var(--copper-bg); color: #8a4a22; }
+  .chip.mute { background: #eceae3; color: var(--mute); }
+  .note { background: var(--copper-bg); border-radius: 10px; padding: 10px 12px; font-size: 15px; margin-top: 10px; }
+  .orig { color: var(--mute); text-decoration: line-through; font-size: 15px; }
+  details summary { cursor: pointer; font-size: 14px; color: var(--green); padding: 8px 0; }
+  .tabs { display: flex; margin: 12px 0 0; flex-wrap: wrap; }
+  .tabs button { margin: 0 8px 8px 0; }
+  .tabs button { min-height: 40px; padding: 8px 14px; font-size: 15px; }
+  .tabs button.on { background: var(--green); color: #fff; }
+  .modes { margin: 4px 0 6px; } .modes button { border-color: var(--copper); color: #8a4a22; } .modes button.on { background: var(--copper); border-color: var(--copper); color: #fff; }
+  .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+  .nav .pos { font-size: 14px; color: var(--mute); }
+  .msg { padding: 10px 12px; border-radius: 10px; background: #e9efe9; margin: 10px 0; font-size: 15px; }
+  .msg.warn { background: var(--copper-bg); }
+  .center { text-align: center; padding: 48px 8px; }
+  .listrow { padding: 10px 4px; border-bottom: 1px solid var(--line); font-size: 15px; display: flex; justify-content: space-between; align-items: baseline; cursor: pointer; }
+  .listrow span:first-child { flex: 1; }
+  .hlp { margin: -4px 0 10px; } .hlp summary { font-size: 14px; color: var(--copper); font-weight: 600; cursor: pointer; padding: 4px 0; }
+  .hlp .b { background: var(--copper-bg); border-radius: 10px; padding: 10px 12px; font-size: 15.5px; margin-top: 4px; }
+  .hlp .b p { margin: 0 0 6px; } .hlp .b li { margin: 4px 0; } .hlp ul { margin: 0; padding-left: 18px; }
+  .chips { display: flex; flex-wrap: wrap; margin-top: 4px; }
+  .chips button { min-height: 40px; padding: 8px 12px; font-size: 15px; margin: 0 8px 8px 0; }
+  .chips button.on { background: var(--green); color: #fff; }
+  .lrow { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 10px 0; cursor: pointer; }
+  .lrow .e { font-size: 14px; color: var(--mute); } .lrow .t { font-size: 17px; margin: 2px 0 6px; }
+  .nosel { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+  #helpbtn { background: #fff; color: var(--green); border: 0; border-radius: 99px; min-height: 0; padding: 5px 14px; font-size: 14px; font-weight: 650; }
+  .again { display: block; margin: 18px auto 0; background: none; border: 0; color: var(--green); text-decoration: underline; font-weight: 600; min-height: 44px; }
+  #help { position: fixed; top: 0; right: 0; bottom: 0; left: 0; background: var(--bg); z-index: 20; overflow-y: auto; padding: 16px; display: none; }
+  #help.on { display: block; }
+  #help .in { max-width: 720px; margin: 0 auto; padding-bottom: 60px; }
+  #help h2 { font-size: 22px; margin: 8px 0 4px; }
+  #help h3 { font-size: 17px; margin: 22px 0 4px; color: var(--green); }
+  #help ol { padding-left: 22px; } #help li { margin: 10px 0; }
+  .hint { font-size: 14px; color: var(--mute); margin-top: 6px; }
+  @media (min-width: 800px) { main { padding-top: 24px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Chitonga translation</h1>
+  <span class="me" id="me"></span>
+  <button id="helpbtn" type="button">Instructions</button>
+  <span id="sync">…</span>
+</header>
+<div id="help"><div class="in" id="helpbody"></div></div>
+<main id="app"><div class="center" id="boot">Loading…</div></main>
+<script>
+// If the page cannot start (an old phone, a blocked script), say so on the screen instead of leaving “Loading…”.
+window.__errs = [];
+window.onerror = function (m, u, l) { window.__errs.push(String(m) + ' (line ' + l + ')'); };
+setTimeout(function () {
+  var b = document.getElementById('boot');
+  if (b && b.parentNode) b.innerHTML = '<p><b>The page could not start.</b></p><p style="color:#6b6a64">Please send this screen to Zamai.<br>Phone: ' + (navigator.userAgent || '').slice(0, 120).replace(/</g, '') + '<br>' + (window.__errs.join(' | ') || 'no error message').replace(/</g, '') + '</p>';
+}, 7000);
+</script>
+
+<script>
+(function () {
+  'use strict';
+  var API = '/.netlify/functions/chitonga';
+  var LS = { token: 'ctg_token', cache: 'ctg_cache', outbox: 'ctg_outbox', pos: 'ctg_pos', tab: 'ctg_tab' };
+  var S = { tasks: [], tk: {}, edit: null, why: null, hints: {}, token: null, me: null, rates: { translate: 1.5, check: 1 }, lines: [], by: {}, outbox: [], cur: null, tab: 'todo', online: navigator.onLine, syncing: false, flash: null, offlineData: false };
+
+  // ---- storage (always inside try/catch: private windows and full phones throw) ----
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+  function lsDel(k) { try { localStorage.removeItem(k); } catch (e) {} }
+  function jget(k, d) { try { return JSON.parse(lsGet(k)) || d; } catch (e) { return d; } }
+
+  // unsent work saved under a previous link is kept and sent under THAT link before anything else (5 Oct 2026)
+  function keepOld() {
+    var ob = lsGet(LS.outbox);
+    if (ob && ob !== '[]') { lsSet('ctg_old_outbox', ob); lsSet('ctg_old_token', lsGet(LS.token)); }
+  }
+  function flushOld() {
+    var ob = jget('ctg_old_outbox', []), tk = lsGet('ctg_old_token');
+    if (!ob.length || !tk) return Promise.resolve();
+    return fetch(API, { method: 'POST', headers: { 'x-chitonga-token': tk, 'Content-Type': 'application/json' }, body: JSON.stringify({ ops: ob }) })
+      .then(function (r) { if (r.ok) { lsDel('ctg_old_outbox'); lsDel('ctg_old_token'); } }).catch(function () {});
+  }
+
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var $ = function (id) { return document.getElementById(id); };
+  var app = $('app');
+
+  // ---- token: from the personal link (#T=...), kept on the phone, removed from the address bar ----
+  (function () {
+    var m = /[#&]T=([A-Za-z0-9_-]{20,})/.exec(location.hash);
+    if (m) {
+      // a different person's link on a shared phone: drop the previous person's cache and unsent edits
+      if (lsGet(LS.token) && lsGet(LS.token) !== m[1]) { keepOld(); lsDel(LS.cache); lsDel(LS.outbox); }
+      // the link keeps its #T=... part in the address on purpose: on an iPhone, an app added to the home screen starts
+      // from the address it was added from and does not share storage with Safari, so it would otherwise lose the token
+      lsSet(LS.token, m[1]);
+    }
+    S.token = lsGet(LS.token);
+  })();
+
+  // ---- English help: notes on hard words, written in advance (hints.json), cached for offline ----
+  // English help notes, one file per block (hints.json = block 1, hints-b3.json, hints-b4.json ...); a phone loads only
+  // the files for the blocks it has work in, keeps them for offline use, and fetches each one once per visit
+  var hintFiles = {};
+  function loadHints() {
+    var blocks = {}; (S.lines || []).forEach(function (l) { if (l.block) blocks[l.block] = 1; });
+    var files = Object.keys(blocks).map(function (b) { return b === '1' ? 'hints.json' : 'hints-b' + b + '.json'; });
+    files.forEach(function (f) {
+      if (hintFiles[f]) return; hintFiles[f] = 1;
+      var key = 'ctg_hints:' + f, c = jget(f === 'hints.json' ? 'ctg_hints' : key, null);
+      if (c) Object.keys(c).forEach(function (k) { S.hints[k] = c[k]; });
+      fetch(f).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+        if (!j) return;
+        Object.keys(j).forEach(function (k) { S.hints[k] = j[k]; });
+        lsSet(f === 'hints.json' ? 'ctg_hints' : key, JSON.stringify(j)); render();
+      }).catch(function () {});
+    });
+  }
+  function hintHtml(l) {
+    var h = S.hints[l.line_id]; if (!h) return '';
+    var b = '';
+    if (h.p) b += '<p><b>In simple words:</b> ' + esc(h.p) + '</p>';
+    if (h.w && h.w.length) b += '<ul>' + h.w.map(function (x) { return '<li><b>' + esc(x[0]) + '</b>: ' + esc(x[1]) + '</li>'; }).join('') + '</ul>';
+    return '<details class="hlp" data-hlp="' + esc(l.line_id) + '"' + (S.hopen === l.line_id ? ' open' : '') + '><summary>Unclear English? See help</summary><div class="b">' + b + '</div></details>';
+  }
+
+  // ---- how long a line takes (sent with the translation; the person is told nothing is graded on it) ----
+  var TM = { cur: null, since: 0, acc: {}, first: {}, keys: {}, paste: {} };
+  function tmClose() { if (TM.cur && TM.since) { TM.acc[TM.cur] = (TM.acc[TM.cur] || 0) + Math.min(Date.now() - TM.since, 600000); } TM.since = 0; }
+  function tmTouch(id) { if (TM.cur === id && TM.since) return; tmClose(); TM.cur = id; TM.since = id ? Date.now() : 0; }
+  function tmTake(id) {
+    tmClose();
+    var m = { m: TM.acc[id] || 0, t: TM.first[id] ? Math.min(Date.now() - TM.first[id], 1800000) : 0, k: TM.keys[id] || 0, p: TM.paste[id] || 0 };
+    delete TM.acc[id]; delete TM.first[id]; delete TM.keys[id]; delete TM.paste[id];
+    return m;
+  }
+  document.addEventListener('visibilitychange', function () { if (document.hidden) tmClose(); else if (TM.cur) TM.since = Date.now(); });
+
+  // ---- data ----
+  function index() {
+    S.by = {}; S.lines.forEach(function (l) { S.by[l.line_id] = l; });
+    S.tk = {}; (S.tasks || []).forEach(function (t) { S.tk[t.line_id] = t; });
+  }
+  function saveCache() { lsSet(LS.cache, JSON.stringify({ me: S.me, rates: S.rates, lines: S.lines, tasks: S.tasks, at: Date.now() })); }
+  function saveOutbox() { lsSet(LS.outbox, JSON.stringify(S.outbox)); }
+  function draftKey(id) { return 'ctg_draft:' + id; }
+  function draftKeyRv(id) { return 'ctg_draft:rv:' + id; }
+
+  function api(method, body) {
+    return fetch(API, { method: method, headers: { 'x-chitonga-token': S.token, 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined })
+      .then(function (r) { return r.json().then(function (j) { return { status: r.status, data: j }; }); });
+  }
+
+  function load() {
+    var c = jget(LS.cache, null);
+    if (c && c.lines) { S.me = c.me; S.rates = c.rates || S.rates; S.lines = c.lines; S.tasks = c.tasks || []; index(); S.offlineData = true; }
+    S.outbox = jget(LS.outbox, []);
+    loadHints();
+    applyOutboxLocally();
+    S.tab = lsGet(LS.tab) || 'todo';
+    if (S.tab === 'waiting') S.tab = 'mine';
+    render();
+    refresh();
+  }
+
+  // pull the server's version; keep our own unsynced edits on top
+  function refresh() {
+    if (!S.token) return Promise.resolve();
+    return api('GET').then(function (res) {
+      if (res.status === 403) { S.me = null; S.lines = []; S.badToken = (res.data && res.data.error === 'retired') ? 'retired' : true; render(); return; }
+      if (res.status !== 200) throw new Error('http ' + res.status);
+      S.badToken = false; S.me = res.data.me; S.rates = res.data.rates || S.rates; S.lines = res.data.lines; S.tasks = res.data.tasks || []; index();
+      S.offlineData = false; saveCache(); applyOutboxLocally(); render(); updateSync();
+      loadHints();
+      if (!lsGet('ctg_help_seen')) showHelp();
+    }).catch(function () { S.offlineData = true; updateSync(); });
+  }
+
+  // show queued edits in the lists even before they reach the server
+  function applyOutboxLocally() {
+    S.outbox.forEach(function (op) { var l = S.by[op.line_id]; if (l) applyOp(l, op); });
+  }
+  function applyOp(l, op) {
+    if (op.kind === 'translate') { l.translation = op.translation; l.loanwords = op.loanwords || null; l.note = op.note || null; l.check_status = null; l.check_note = null; l.original_translation = null; l.translated_by = S.me && S.me.code; }
+    else if (op.kind === 'flag') { l.note = op.note; l.check_status = 'flagged'; }
+    else if (op.kind === 'ok') { l.check_status = 'ok'; }
+    else if (op.kind === 'correct') { l.original_translation = l.original_translation || l.translation; l.translation = op.translation; l.check_status = 'corrected'; l.check_note = op.note || null; }
+    else if (op.kind === 'check_flag') { l.check_status = 'flagged'; l.check_note = op.note; }
+    var t = S.tk && S.tk[op.line_id];
+    if (t && ['ok', 'correct', 'check_flag', 'reverse', 'reverse_flag'].indexOf(op.kind) >= 0) {
+      t.status = 'done';
+      if (op.kind === 'reverse') { t.result = op.english; t.note = op.note || null; }
+      if (op.kind === 'reverse_flag') { t.result = null; t.note = op.note; }
+    }
+  }
+
+  // which phone a save came from: a random id kept on this phone, and the phone type. Never personal data.
+  var DEV = lsGet('ctg_device');
+  if (!DEV) { DEV = Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); lsSet('ctg_device', DEV); }
+  var UA = navigator.userAgent || '', PLAT = /iPhone|iPad/.test(UA) ? 'iPhone' : /Android/.test(UA) ? 'Android' : /Windows/.test(UA) ? 'Windows' : /Mac/.test(UA) ? 'Mac' : 'other';
+
+  function enqueue(op) {
+    op.at = new Date().toISOString(); op.d = DEV; op.u = PLAT;
+    S.outbox.push(op);
+    var l = S.by[op.line_id]; if (l) applyOp(l, op);
+    saveOutbox(); saveCache(); lsDel(draftKey(op.line_id)); lsDel(draftKeyRv(op.line_id));
+    updateSync();
+    sync();
+  }
+
+  function sync() {
+    flushOld();
+    if (S.syncing || !S.outbox.length || !S.token) return Promise.resolve();
+    S.syncing = true; updateSync();
+    var batch = S.outbox.slice(0, 100);
+    return api('POST', { ops: batch }).then(function (res) {
+      if (res.status !== 200) throw new Error('http ' + res.status);
+      S.outbox = S.outbox.slice(batch.length); saveOutbox();
+      var rej = res.data.rejected || [];
+      (res.data.lines || []).forEach(function (f) { var l = S.by[f.line_id]; if (l) Object.keys(f).forEach(function (k) { l[k] = f[k]; }); });
+      (res.data.tasks || []).forEach(function (f) { var t = S.tk[f.line_id]; if (t && t.id === f.id) Object.keys(f).forEach(function (k) { t[k] = f[k]; }); });
+      if (rej.length) {
+        var reasons = { locked: 'was already checked, so your change was not kept', not_yours: 'is not given to you', not_given: 'is not given to you', own_line: 'is your own line', empty: 'was empty' };
+        S.flash = { warn: true, text: rej.length + ' change(s) not kept: ' + rej.slice(0, 3).map(function (r) { return (reasons[r.reason] || r.reason); }).join('; ') };
+        refresh();
+      }
+      saveCache();
+    }).catch(function () { /* stays on the phone; tried again later */ }).then(function () {
+      S.syncing = false; updateSync();
+      if (S.outbox.length && S.online) setTimeout(sync, 4000); else render();
+    });
+  }
+
+  function updateSync() {
+    var el = $('sync'), n = S.outbox.length;
+    if (n) { el.className = 'pending'; el.textContent = 'saved on phone · ' + n + ' to send'; }
+    else if (!S.online || S.offlineData) { el.className = ''; el.textContent = 'offline · all sent'; }
+    else { el.className = ''; el.textContent = 'all saved ✓'; }
+    $('me').textContent = S.me ? S.me.code : '';
+  }
+
+  // ---- helpers ----
+  function statusChip(l) {
+    if (l.check_status === 'ok') return '<span class="chip">checked ✓</span>';
+    if (l.check_status === 'corrected') return '<span class="chip">checked, corrected</span>';
+    if (l.check_status === 'flagged') return '<span class="chip copper">needs another look</span>';
+    if (l.translation) return '<span class="chip mute">waiting for check</span>';
+    return '<span class="chip mute">to do</span>';
+  }
+  function neighbours(l, n) {
+    var i = S.lines.indexOf(l), out = { before: [], after: [] };
+    for (var k = 1; k <= n; k++) {
+      var p = S.lines[i - k], q = S.lines[i + k];
+      if (p && p.doc_id && p.doc_id === l.doc_id) out.before.unshift(p);
+      if (q && q.doc_id && q.doc_id === l.doc_id) out.after.push(q);
+    }
+    return out;
+  }
+  function ctxHtml(arr, side) {
+    return arr.map(function (x) {
+      return '<div class="ctx">' + esc(x.en) + (x.translation ? '<br><b>' + esc(x.translation) + '</b>' : '') + '</div>';
+    }).join('');
+  }
+
+  // ---- the work given to this person (by Zamai, item by item) ----
+  //   translate: lines assigned to them; review / reverse: items in their task list (one per line)
+  function mine() { return S.lines.filter(function (l) { return l.assigned_to === S.me.code; }); }
+  function taskOf(id) { return S.tk[id] || null; }
+  function kindOf(l) { var t = taskOf(l.line_id); return t ? t.kind : (l.assigned_to === S.me.code ? 'translate' : null); }
+  function isTodo(l) {
+    var t = taskOf(l.line_id); if (t) return t.status !== 'done';
+    return l.assigned_to === S.me.code && (!l.translation || (l.check_status === 'flagged' && l.check_note));
+  }
+  function isDone(l) {
+    var t = taskOf(l.line_id); if (t) return t.status === 'done';
+    return l.assigned_to === S.me.code && (l.check_status === 'ok' || l.check_status === 'corrected');
+  }
+
+  // ---- queues ----
+  function visible() {
+    if (S.tab === 'todo') return S.lines.filter(isTodo);
+    if (S.tab === 'mine') return mine().filter(function (l) { return l.translation; });
+    if (S.tab === 'done') return S.lines.filter(isDone);
+    return [];
+  }
+
+  function current() {
+    var list = visible();
+    if (S.cur && S.by[S.cur] && list.some(function (l) { return l.line_id === S.cur; })) return S.by[S.cur];
+    S.cur = list.length ? list[0].line_id : null;
+    return S.cur ? S.by[S.cur] : null;
+  }
+
+  // ---- render ----
+  function render() {
+    updateSync();
+    if (!S.token) { app.innerHTML = linkBox('<b>Paste your personal link.</b>', 'This page only works with the personal link Zamai sent you. Copy that link (press and hold it in WhatsApp, then Copy), paste it in the box below and press the button. You only need to do this once on this phone.'); bindLink(); return; }
+    if (S.badToken === 'retired') { app.innerHTML = linkBox('<b>This link has been replaced.</b>', 'Zamai has sent you a new personal link. Copy it from WhatsApp (press and hold it, then Copy), paste it in the box below and press the button. Your work is safe.'); bindLink(); return; }
+    if (S.badToken) { app.innerHTML = linkBox('<b>This link is not working.</b>', 'Check that you pasted the whole link Zamai sent you. If it still does not work, ask Zamai for a new link.'); bindLink(); return; }
+    if (!S.me) { app.innerHTML = '<div class="center">Loading…</div>'; return; }
+    if (['todo', 'mine', 'done'].indexOf(S.tab) < 0) S.tab = 'todo';
+    app.innerHTML = viewMain();
+    bind();
+  }
+
+  // asking for the personal link inside the app: a home-screen app on an iPhone has its own storage and starts without it
+  function linkBox(title, text) {
+    return '<div class="center" style="padding-top:28px"><p>' + title + '</p><p style="color:var(--mute)">' + esc(text) + '</p>' +
+      '<input id="linkin" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Paste your link here" style="margin-top:8px">' +
+      '<div class="row" style="justify-content:center"><button class="primary" id="linkgo" type="button">Use my link</button></div><div class="hint" id="linkmsg"></div></div>';
+  }
+  function bindLink() {
+    var go = $('linkgo'); if (!go) return;
+    go.onclick = function () {
+      var v = ($('linkin').value || '').trim(), m = /T=([A-Za-z0-9_-]{20,})/.exec(v) || /^([A-Za-z0-9_-]{20,})$/.exec(v);
+      if (!m) { $('linkmsg').textContent = 'That does not look like your link. Please paste the whole link from the message.'; return; }
+      if (lsGet(LS.token) && lsGet(LS.token) !== m[1]) keepOld();
+      lsDel(LS.cache); lsDel(LS.outbox); lsSet(LS.token, m[1]);
+      S.token = m[1]; S.badToken = false; S.me = null; S.lines = []; S.outbox = []; S.by = {};
+      render(); refresh();
+    };
+  }
+
+  function head(counts, tabs) {
+    var h = '';
+    if (S.flash) {   // a message stays on screen for 5 seconds, even if the page redraws when saves reach the server
+      if (!S.flash.until) S.flash.until = Date.now() + 5000;
+      if (Date.now() < S.flash.until) h += '<div class="msg' + (S.flash.warn ? ' warn' : '') + '">' + esc(S.flash.text) + '</div>'; else S.flash = null;
+    }
+    h += counts;
+    h += '<div class="tabs">' + tabs.map(function (t) { return '<button data-tab="' + t[0] + '" class="' + (S.tab === t[0] ? 'on' : '') + '">' + t[1] + '</button>'; }).join('') + '</div>';
+    return h;
+  }
+
+  function viewMain() {
+    var M = mine(), work = S.lines.filter(function (l) { return kindOf(l); });
+    var todo = work.filter(isTodo).length, done = work.filter(isDone).length, sent = M.filter(function (l) { return l.translation; }).length;
+    var total = M.length + (S.tasks || []).length, finished = total - todo;
+    var counts = total
+      ? '<div class="bar"><i style="width:' + Math.round(100 * finished / total) + '%"></i></div><div class="stats"><span>' + todo + ' to do</span><span>' + finished + ' of ' + total + ' finished</span></div>'
+      : '';
+    var tabs = [['todo', 'To do (' + todo + ')']];
+    if (M.length) tabs.push(['mine', 'My lines (' + sent + ')']);
+    tabs.push(['done', 'Done (' + done + ')']);
+    var out = head(counts, tabs);
+    if (!total) return out + '<div class="center">Nothing has been given to you yet.</div>';
+    if (S.tab === 'mine' && !S.edit) return out + listHtml();
+    var editing = S.tab === 'mine' && !!S.edit && !!S.by[S.edit];
+    var l = editing ? S.by[S.edit] : current();
+    if (!l) return out + '<div class="center"><p><b>' + (S.tab === 'todo' ? 'Nothing left to do. Thank you.' : 'Nothing in this list.') + '</b></p></div>';
+    var kind = editing ? 'translate' : kindOf(l);
+    if (kind === 'review') return out + reviewCard(l);
+    if (kind === 'reverse') return out + reverseCard(l);
+    var nb = neighbours(l, 2), list = visible(), pos = list.findIndex(function (x) { return x.line_id === l.line_id; });
+    if (editing) out += '<button class="ghost" id="backlist" type="button" style="margin-top:12px">← My lines</button>';
+    var draft = lsGet(draftKey(l.line_id));
+    var val = draft != null ? draft : (l.translation || '');
+    var locked = l.check_status === 'ok' || l.check_status === 'corrected';
+    var ns = ' nosel';
+    var h = out + '<div class="' + ns.trim() + '">' + ctxHtml(nb.before, 'b') + '</div>';
+    h += '<div class="card"><div class="doc">' + esc(l.doc_id ? 'Dialogue · line ' + l.seq : l.part) + ' &nbsp; ' + statusChip(l) + '</div>';
+    h += '<div class="en' + ns + '">' + esc(l.en) + '</div>' + hintHtml(l);
+    if (l.check_status === 'corrected') h += '<div class="note">Checked and changed.<br><span class="orig">' + esc(l.original_translation) + '</span><br><b>' + esc(l.translation) + '</b>' + (l.check_note ? '<br>' + esc(l.check_note) : '') + '</div>';
+    else if (l.check_status === 'flagged' && l.check_note) h += '<div class="note"><b>Please look again:</b> ' + esc(l.check_note) + '</div>';
+    if (locked) {
+      if (l.check_status === 'ok') h += '<div class="en" style="font-size:19px;color:var(--green)">' + esc(l.translation) + '</div>';
+      if (editing) h += '<div class="hint">This line has been checked, so it cannot be changed here.</div>';
+    } else {
+      h += '<label for="tr">Chitonga</label><textarea id="tr" autocapitalize="sentences" spellcheck="false" placeholder="Write it the way you would say it at home">' + esc(val) + '</textarea>' + '<div class="hint">Please type your own translation. Pasting is switched off.</div>';
+      h += '<details' + (l.loanwords ? ' open' : '') + '><summary>Used a borrowed word? Tell us</summary><div class="hint">A borrowed word is a word from another language (English, Bemba, Nyanja, Lozi) that people now use in Chitonga.</div><label for="lw">word=language:why (separate several with ;)</label><input id="lw" type="text" placeholder="e.g. bus=en:no Chitonga word" value="' + esc(l.loanwords || '') + '"></details>';
+      h += '<label for="nt">Note (optional)</label><input id="nt" type="text" placeholder="e.g. I changed the idea because ..." value="' + esc(l.check_status ? '' : l.note || '') + '">';
+      h += '<details><summary>Cannot translate it? Flag it</summary><label for="fl">What is the problem?</label><input id="fl" type="text" value="' + esc(l.check_status === 'flagged' && !l.check_note ? l.note || '' : '') + '"><div class="row"><button class="copper" id="flag">Flag this line</button></div></details>';
+      if (editing && l.translation) {
+        h += '<label>Why are you changing it?</label><div class="chips" id="why">' +
+          WHY.map(function (w) { return '<button type="button" data-why="' + w[0] + '"' + (S.why === w[0] ? ' class="on"' : '') + '>' + w[1] + '</button>'; }).join('') + '</div>' +
+          '<input id="rt" type="text" placeholder="More detail (optional)">';
+      }
+      h += '<div class="row"><button class="primary" id="save">' + (editing ? 'Save change' : 'Save and next') + '</button></div>';
+    }
+    h += '</div><div class="' + ns.trim() + '">' + ctxHtml(nb.after, 'a') + '</div>';
+    if (!editing) h += '<div class="nav"><button class="ghost" id="prev"' + (pos <= 0 ? ' disabled' : '') + '>← Back</button><span class="pos">' + (pos + 1) + ' of ' + list.length + '</span><button class="ghost" id="skip"' + (pos >= list.length - 1 ? ' disabled' : '') + '>Skip →</button></div>';
+    h += '<button class="again" type="button" data-help>Read the instructions again</button>';
+    return h;
+  }
+
+  var WHY = [['spelling', 'Spelling'], ['word', 'Better word'], ['meaning', 'Wrong meaning'], ['typo', 'Typing mistake'], ['other', 'Other']];
+  // all of the person's own finished lines, newest first; tap one to change it
+  function listHtml() {
+    var L = visible().slice().sort(function (a, b) { return String(b.translated_at || '9999').localeCompare(String(a.translated_at || '9999')); });
+    if (!L.length) return '<div class="center"><p><b>You have not saved any lines yet.</b></p></div>';
+    return '<div class="hint" style="margin-top:12px">Tap a line to read it again or change it. You can change a line until it has been checked.</div>' +
+      L.map(function (l) {
+        var cut = function (x, n) { x = x || ''; return x.length > n ? x.slice(0, n) + '…' : x; };
+        return '<div class="lrow" data-open="' + esc(l.line_id) + '"><div class="e">' + esc(cut(l.en, 80)) + '</div><div class="t">' + esc(cut(l.translation, 90)) + '</div>' + statusChip(l) + '</div>';
+      }).join('');
+  }
+
+  function navHtml(l) {
+    var list = visible(), pos = list.findIndex(function (x) { return x.line_id === l.line_id; });
+    return '<div class="nav"><button class="ghost" id="prev"' + (pos <= 0 ? ' disabled' : '') + '>← Back</button><span class="pos">' + (pos + 1) + ' of ' + list.length + '</span><button class="ghost" id="skip"' + (pos >= list.length - 1 ? ' disabled' : '') + '>Skip →</button></div><button class="again" type="button" data-help>Read the instructions again</button>';
+  }
+
+  // review: someone else's translation, with the English; OK, correct, or flag
+  function reviewCard(l) {
+    var t = taskOf(l.line_id) || {}, nb = neighbours(l, 2);
+    var h = ctxHtml(nb.before, 'b');
+    h += '<div class="card"><div class="doc">Review · ' + esc(l.doc_id ? 'Dialogue · line ' + l.seq : l.part) + ' &nbsp; ' + (t.status === 'done' ? '<span class="chip">done ✓</span>' : statusChip(l)) + '</div>';
+    h += '<div class="en">' + esc(l.en) + '</div>' + hintHtml(l);
+    if (l.note && l.check_status === 'flagged' && !l.check_note) h += '<div class="note"><b>Translator’s flag:</b> ' + esc(l.note) + '</div>';
+    else if (l.note) h += '<div class="note">Translator’s note: ' + esc(l.note) + '</div>';
+    if (l.loanwords) h += '<div class="note">Borrowed words: ' + esc(l.loanwords) + '</div>';
+    h += '<label for="ed">Chitonga (change it here if it needs correcting)</label><textarea id="ed" spellcheck="false">' + esc(l.translation || '') + '</textarea>';
+    h += '<label for="cn">Note (optional; required to flag)</label><input id="cn" type="text" value="' + esc(l.check_note || '') + '">';
+    h += '<div class="row"><button class="primary" id="ok">OK</button><button id="correct">Save my correction</button><button class="copper" id="cflag">Flag</button></div>';
+    return h + '</div>' + ctxHtml(nb.after, 'a') + navHtml(l);
+  }
+
+  // reverse: Chitonga only, never the English; the person writes in English what it says
+  function ctxRev(arr) { return arr.map(function (x) { return x.translation ? '<div class="ctx"><b>' + esc(x.translation) + '</b></div>' : ''; }).join(''); }
+  function reverseCard(l) {
+    var t = taskOf(l.line_id) || {}, nb = neighbours(l, 2), draft = lsGet(draftKeyRv(l.line_id));
+    var h = '<div class="nosel">' + ctxRev(nb.before) + '</div>';
+    h += '<div class="card"><div class="doc">Write the English · ' + esc(l.doc_id ? 'Dialogue · line ' + l.seq : l.part) + ' &nbsp; ' + (t.status === 'done' ? '<span class="chip">done ✓</span>' : '<span class="chip mute">to do</span>') + '</div>';
+    h += '<div class="hint">Read the Chitonga and write in plain English what it says. Write what you understand; do not guess.</div>';
+    h += '<div class="en nosel">' + esc(l.translation || '') + '</div>';
+    h += '<label for="rv">English</label><textarea id="rv" autocapitalize="sentences" spellcheck="false" placeholder="What does it say?">' + esc(draft != null ? draft : (t.result || '')) + '</textarea><div class="hint">Please type it yourself. Pasting is switched off.</div>';
+    h += '<label for="rvn">Note (optional)</label><input id="rvn" type="text" value="' + esc(t.result ? (t.note || '') : '') + '">';
+    h += '<details><summary>Cannot understand it? Flag it</summary><label for="rvf">What is unclear?</label><input id="rvf" type="text" value="' + esc(!t.result && t.note ? t.note : '') + '"><div class="row"><button class="copper" id="rvflag">Flag this line</button></div></details>';
+    h += '<div class="row"><button class="primary" id="rvsave">Save and next</button></div>';
+    return h + '</div><div class="nosel">' + ctxRev(nb.after) + '</div>' + navHtml(l);
+  }
+
+  function step(d) {
+    var list = visible(), i = list.findIndex(function (x) { return x.line_id === S.cur; });
+    var n = list[Math.max(0, Math.min(list.length - 1, i + d))];
+    S.cur = n ? n.line_id : null; render(); window.scrollTo(0, 0);
+  }
+  // run an action on a line, then show the next line of the list (the saved one usually leaves it)
+  function act(id, fn) {
+    var list = visible(), i = list.findIndex(function (x) { return x.line_id === id; });
+    var next = list[i + 1] || list[i - 1];
+    fn();
+    S.cur = next ? next.line_id : null; render(); window.scrollTo(0, 0);
+  }
+
+  function bind() {
+    var q = function (id) { return $(id); };
+    Array.prototype.forEach.call(app.querySelectorAll('[data-tab]'), function (b) {
+      b.onclick = function () { S.tab = b.getAttribute('data-tab'); lsSet(LS.tab, S.tab); S.cur = null; render(); };
+    });
+    Array.prototype.forEach.call(app.querySelectorAll('[data-help]'), function (b) { b.onclick = showHelp; });
+    Array.prototype.forEach.call(app.querySelectorAll('[data-open]'), function (b) {
+      b.onclick = function () { S.edit = b.getAttribute('data-open'); S.why = null; render(); window.scrollTo(0, 0); };
+    });
+    if (q('backlist')) q('backlist').onclick = function () { S.edit = null; S.why = null; render(); window.scrollTo(0, 0); };
+    Array.prototype.forEach.call(app.querySelectorAll('[data-why]'), function (b) {
+      b.onclick = function () {
+        S.why = b.getAttribute('data-why');
+        Array.prototype.forEach.call(app.querySelectorAll('[data-why]'), function (x) { x.className = x === b ? 'on' : ''; });
+      };
+    });
+    if (q('prev')) q('prev').onclick = function () { step(-1); };
+    if (q('skip')) q('skip').onclick = function () { step(1); };
+    var l = (S.tab === 'mine' && S.edit) ? S.by[S.edit] : (S.cur && S.by[S.cur]);
+    if (!l) return;
+    var box = q('tr') || q('rv'), dk = q('tr') ? draftKey(l.line_id) : draftKeyRv(l.line_id);
+    if (box) tmTouch(l.line_id); else tmTouch(null);
+    if (box) {
+      box.oninput = function () { lsSet(dk, box.value); if (!TM.first[l.line_id]) TM.first[l.line_id] = Date.now(); TM.keys[l.line_id] = (TM.keys[l.line_id] || 0) + 1; };
+      {   // people type their own words, in either direction
+        var stop = function (e) { e.preventDefault(); TM.paste[l.line_id] = (TM.paste[l.line_id] || 0) + 1; };
+        box.onpaste = stop; box.ondrop = stop; box.ondragover = stop;
+        box.addEventListener('beforeinput', function (e) { if (/^insertFrom(Paste|Drop|Yank)/.test(e.inputType || '')) { e.preventDefault(); TM.paste[l.line_id] = (TM.paste[l.line_id] || 0) + 1; } });
+      }
+    }
+    if (q('rvsave')) q('rvsave').onclick = function () {
+      var e = q('rv').value.trim(); if (!e) { q('rv').focus(); return; }
+      var id = l.line_id, nt = q('rvn').value.trim(), tm = tmTake(id);
+      act(id, function () { enqueue({ line_id: id, kind: 'reverse', english: e, note: nt, m: tm.m, t: tm.t, k: tm.k, p: tm.p }); });
+    };
+    if (q('rvflag')) q('rvflag').onclick = function () {
+      var n = q('rvf').value.trim(); if (!n) { q('rvf').focus(); return; }
+      var id = l.line_id; act(id, function () { enqueue({ line_id: id, kind: 'reverse_flag', note: n }); });
+    };
+    if (q('save')) q('save').onclick = function () {
+      var t = q('tr').value.trim();
+      if (!t) { q('tr').focus(); return; }
+      var id = l.line_id, lw = q('lw').value.trim(), nt = q('nt') ? q('nt').value.trim() : '';
+      if (S.tab === 'mine' && S.edit) {   // changing a saved line: say why, then back to the list
+        var changed = t !== (l.translation || '').trim(), why = '';
+        if (changed) {
+          if (!S.why) { S.flash = { warn: true, text: 'Please choose why you are changing it.' }; var keep = t; render(); if (q('tr')) q('tr').value = keep; return; }
+          var lab = (WHY.filter(function (w) { return w[0] === S.why; })[0] || [0, S.why])[1], more = q('rt') ? q('rt').value.trim() : '';
+          why = lab + (more ? ': ' + more : '');
+        }
+        var tm2 = tmTake(id);
+        enqueue({ line_id: id, kind: 'translate', translation: t, loanwords: lw, note: nt, r: why, m: tm2.m, t: tm2.t, k: tm2.k, p: tm2.p });
+        S.edit = null; S.why = null; S.flash = { text: changed ? 'Change saved.' : 'Saved.' }; render(); window.scrollTo(0, 0);
+        return;
+      }
+      var tm = tmTake(id);
+      act(id, function () { enqueue({ line_id: id, kind: 'translate', translation: t, loanwords: lw, note: nt, m: tm.m, t: tm.t, k: tm.k, p: tm.p }); });
+    };
+    if (q('flag')) q('flag').onclick = function () {
+      var n = q('fl').value.trim(); if (!n) { q('fl').focus(); return; }
+      var id = l.line_id; act(id, function () { enqueue({ line_id: id, kind: 'flag', note: n }); });
+    };
+    if (q('ok')) q('ok').onclick = function () { var id = l.line_id, cn = q('cn').value.trim(); act(id, function () { enqueue({ line_id: id, kind: 'ok', note: cn }); }); };
+    if (q('correct')) q('correct').onclick = function () {
+      var t = q('ed').value.trim(); if (!t) { q('ed').focus(); return; }
+      if (t === (l.translation || '').trim()) { S.flash = { warn: true, text: 'The text is the same. Use OK, or change it first.' }; render(); return; }
+      var id = l.line_id, cn = q('cn').value.trim(); act(id, function () { enqueue({ line_id: id, kind: 'correct', translation: t, note: cn }); });
+    };
+    if (q('cflag')) q('cflag').onclick = function () {
+      var n = q('cn').value.trim(); if (!n) { q('cn').focus(); return; }
+      var id = l.line_id; act(id, function () { enqueue({ line_id: id, kind: 'check_flag', note: n }); });
+    };
+  }
+
+  // ---- instructions ----
+  function helpHtml() {
+    var h = '<h2>How to translate</h2><p class="hint">Read this once. You can open it again at any time with the “Instructions” button at the top.</p><ol>' +
+      '<li><b>Quality first.</b> One good line is worth more than ten quick ones. Take your time.</li>' +
+      '<li><b>Write the meaning, not the English words.</b> Read the whole line, then write it the way you would say it at home. Do not follow the English word order.</li>' +
+      '<li><b>Type it yourself.</b> No translation apps, no AI, no pasting. Lines are compared with each other, and machine translation is found.</li>' +
+      '<li><b>Read the lines before and after.</b> They tell you who is speaking and to whom: one person or many, a friend or an elder.</li>' +
+      '<li><b>Slang and sayings</b> (“Dude”, “vibes”): write what a Tonga speaker would really say in that situation. If you changed the idea, say so in the note.</li>' +
+      '<li><b>Everyday village Chitonga</b> (Plateau Tonga, Choma and Batoka), the way young people in the village speak. Not church language.</li>' +
+      '<li><b>Borrowed words.</b> A borrowed word is a word that came from another language, such as English, Bemba, Nyanja or Lozi, and that is now used inside Chitonga. Use one only if people in the village also say it and there is no common Chitonga word. Then write it in the borrowed words box as <i>word=language:why</i>, for example <i>bus=en:no Chitonga word</i>. If you are not sure, use the Chitonga word.</li>' +
+      '<li><b>One line, no notes inside it.</b> Put notes in the note box.</li>' +
+      '<li><b>Cannot translate a line?</b> Flag it and say why. Do not guess.</li></ol>';
+    var has = function (k) { return (S.tasks || []).some(function (t) { return t.kind === k; }); };
+    if (has('reverse')) h += '<h3>Writing the English (reverse)</h3><ol>' +
+      '<li>You see only the Chitonga, never the English it came from. That is on purpose.</li>' +
+      '<li>Write in plain English what the Chitonga says, the way you understand it. Do not try to guess the original.</li>' +
+      '<li>If a line is unclear or could mean two things, say so in the note, or flag it.</li></ol>';
+    if (has('review')) h += '<h3>Reviewing</h3><p class="hint">You only review lines other people translated.</p><ol>' +
+      '<li>Press <b>OK</b> only if the line is correct Chitonga and reads naturally, not like English in Chitonga words.</li>' +
+      '<li>If it needs a change, correct it and save. Both versions are kept.</li>' +
+      '<li>Look for words from Bemba, Nyanja or English that a village speaker would not use, and for the same word spelled in different ways.</li>' +
+      '<li>Flag a line when it needs discussion, and write why.</li></ol>';
+    return h + '<div class="row"><button class="primary" id="helpclose" type="button">Got it</button></div>';
+  }
+  function showHelp() { $('helpbody').innerHTML = helpHtml(); $('help').className = 'on'; window.scrollTo(0, 0); $('helpclose').onclick = function () { $('help').className = ''; lsSet('ctg_help_seen', '1'); }; }
+  $('helpbtn').onclick = showHelp;
+
+  // ---- connectivity, install, offline shell ----
+  window.addEventListener('online', function () { S.online = true; updateSync(); sync().then(refresh); });
+  window.addEventListener('offline', function () { S.online = false; updateSync(); });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && S.online) sync().then(refresh); });
+  setInterval(function () { if (S.online && S.outbox.length) sync(); }, 60000);
+  if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () {}); }
+
+  load();
+})();
+</script>
+</body>
+</html>
