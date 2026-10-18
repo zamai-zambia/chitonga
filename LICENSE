@@ -20,6 +20,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Documentation, results and translations in this repository are licensed under
+Documentation and results in this repository are licensed under
 Creative Commons Attribution 4.0 International (CC BY 4.0):
 https://creativecommons.org/licenses/by/4.0/
+
+Translations, data and trained models are not part of this repository and are not
+released under these licences; they are shared on request (chris@zamai.pro).
